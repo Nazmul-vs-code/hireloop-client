@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { authClient } from '@/lib/auth-client';
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,9 +20,23 @@ const SignUpPage = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Better-Auth payload generated:", formData);
+
+    const { data, error } = await authClient.signUp.email({
+    name: formData.name , 
+    email: formData.email ,  
+    password: formData.password,
+     
+});
+console.log(data , error , ' data , error ')
+    if(data){
+        toast.success('data here : '+data.user)
+    }
+    if(error){
+        
+        toast.error('error here : '+error.message)
+    }
   };
 
   return (
@@ -240,7 +256,7 @@ const SignUpPage = () => {
             <p className="text-center text-xs text-zinc-500 mt-8 font-medium">
               Already have an account?{' '}
               <a href="/sign-in" className="text-purple-400 hover:text-purple-300 underline underline-offset-4 transition-colors ml-0.5">
-                Log in here
+                Sign In here
               </a>
             </p>
 
