@@ -166,7 +166,7 @@ function NavBar() {
                       </span>
                     </MyNavLink>
                     
-                    <MyNavLink href="/sign-up">
+                    <MyNavLink href="/signup">
                       <Button
                         className="bg-gradient-to-r from-[#0891b2] via-[#0284c7] to-[#4f46e5] hover:from-[#06b6d4] hover:via-[#0ea5e9] hover:to-[#6366f1] text-white font-semibold px-5 h-9 min-w-0 rounded-xl border border-white/5 shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(34,211,238,0.4)] hover:scale-[1.03] active:scale-[0.98] transition-all duration-300"
                       >
