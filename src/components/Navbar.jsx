@@ -89,16 +89,14 @@ function NavBar() {
                     </span>
                   </MyNavLink>
                   
-                  <Button 
-                    href="/get-started"
-                    as="a"
-                    onClick={(e) => {
-                      // Let MyNavLink handle routing if needed, or normal navigation
-                    }}
-                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium px-5 h-9 min-w-0 rounded-xl shadow-md shadow-indigo-600/20 hover:shadow-indigo-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-                  >
-                    Get Started
-                  </Button>
+                  {/* HIGH-LIGHTED MIXED GRADIENT BUTTON */}
+                  <MyNavLink href="/signup">
+                    <Button
+                      className="bg-gradient-to-r from-[#5046e6] via-[#7c3aed] to-[#c026d3] hover:from-[#6366f1] hover:via-[#8b5cf6] hover:to-[#d946ef] text-white font-semibold px-6 h-10 min-w-0 rounded-xl border border-white/10 shadow-[0_0_20px_rgba(124,58,237,0.3)] hover:shadow-[0_0_30px_rgba(192,38,211,0.6)] hover:scale-[1.04] active:scale-[0.97] transition-all duration-300"
+                    >
+                      Get Started
+                    </Button>
+                  </MyNavLink>
                 </div>
               </div>
             </header>
@@ -121,13 +119,13 @@ function NavBar() {
                     <MyNavLink href="/sign-in">Sign In</MyNavLink>
                   </li>
                   <li className="pt-2">
-                    <Button 
-                      href="/get-started"
-                      as="a"
-                      className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-xl"
-                    >
-                      Get Started
-                    </Button>
+                    <MyNavLink href="/signup">
+                      <Button
+                        className="w-full bg-gradient-to-r from-[#5046e6] via-[#7c3aed] to-[#c026d3] text-white font-semibold h-10 rounded-xl shadow-[0_0_15px_rgba(124,58,237,0.4)]"
+                      >
+                        Get Started
+                      </Button>
+                    </MyNavLink>
                   </li>
                 </ul>
               </div>
