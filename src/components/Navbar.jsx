@@ -17,6 +17,8 @@ function NavBar() {
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
 
+  console.log("user : " , session)
+
   // Extracting first letter for safe avatar fallback display
   const getInitial = (name) => {
     if (!name) return "?";

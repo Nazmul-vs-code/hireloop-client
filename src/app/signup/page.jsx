@@ -12,7 +12,8 @@ const SignUpPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: ''
+    password: '',
+    role: 'seeker',
   });
 
   const handleInputChange = (e) => {
@@ -24,28 +25,31 @@ const SignUpPage = () => {
     e.preventDefault();
 
     const { data, error } = await authClient.signUp.email({
-    name: formData.name , 
-    email: formData.email ,  
-    password: formData.password,
-     
-});
-console.log(data , error , ' data , error ')
-    if(data){
-        toast.success('data here : '+data.user)
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      role: formData.role
+
+    });
+    console.log(data, error, ' data , error ')
+    if (data) {
+      toast.success('data here : ' + data.user)
+      window.location.href = '/'
     }
-    if(error){
-        
-        toast.error('error here : '+error.message)
+    if (error) {
+
+      toast.error('error here : ' + error.message)
     }
   };
 
   return (
     <main className="relative w-full min-h-screen flex items-center justify-center bg-[#020105] px-4 py-20 overflow-hidden select-none">
-      
+
       {/* ==========================================
           1. INJECTED ENGINE: ULTRA-SLOW STARS & TEXT GRADIENT ANIMATIONS
           ========================================== */}
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes textGradientFlow {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
@@ -84,7 +88,7 @@ console.log(data , error , ' data , error ')
           2. HIGH-DENSITY SKY BEAUTY BACKGROUND
           ========================================== */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        
+
         {/* Layer 1: Massive Micro-Star Array */}
         <div className="absolute inset-0 animate-star-dense-1 opacity-70">
           <div className="absolute top-[7%] left-[12%] w-[1.5px] h-[1.5px] bg-white rounded-full shadow-[0_0_4px_#fff]" />
@@ -129,7 +133,7 @@ console.log(data , error , ' data , error ')
           3. SIGNUP CONTAINER LAYER
           ========================================== */}
       <div className="relative z-10 w-full max-w-md mx-auto flex flex-col items-center">
-        
+
         {/* Dynamic Animated Text Headline */}
         <div className="text-center mb-8 flex flex-col gap-2">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#818cf8] via-[#e879f9] to-[#bfdbfe] animate-text-gradient drop-shadow-[0_2px_10px_rgba(124,58,237,0.3)]">
@@ -143,9 +147,9 @@ console.log(data , error , ' data , error ')
         {/* Form Structural Box */}
         <div className="w-full p-[1px] rounded-3xl bg-gradient-to-b from-white/10 via-white/[0.02] to-transparent shadow-[0_30px_70px_rgba(0,0,0,0.8)] backdrop-blur-xl">
           <div className="w-full bg-[#0a090e]/85 rounded-[23px] p-8 sm:p-10">
-            
+
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-              
+
               {/* Field: Full Name */}
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-zinc-400 tracking-wide uppercase px-1">
@@ -215,6 +219,40 @@ console.log(data , error , ' data , error ')
                   </button>
                 </div>
               </div>
+
+              {/* RBAC */}
+
+              <div className="flex flex-col gap-4">
+                <div className="text-sm font-semibold text-zinc-400 tracking-wide uppercase px-1">
+                  Select your role
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <label className={`cursor-pointer rounded-2xl border border-zinc-800/80 p-4 text-center transition-all duration-200 ${formData.role === 'seeker' ? 'bg-indigo-600/20 border-indigo-500/70 shadow-[0_0_20px_rgba(99,102,241,0.15)]' : 'bg-[#121118]/60 hover:bg-[#1e1b28]'}`}>
+                    <input
+                      type="radio"
+                      name="role"
+                      value="seeker"
+                      checked={formData.role === 'seeker'}
+                      onChange={handleInputChange}
+                      className="sr-only"
+                    />
+                    <span className="block text-sm font-medium text-white">Job Seeker</span>
+                  </label>
+
+                  <label className={`cursor-pointer rounded-2xl border border-zinc-800/80 p-4 text-center transition-all duration-200 ${formData.role === 'recruiter' ? 'bg-indigo-600/20 border-indigo-500/70 shadow-[0_0_20px_rgba(99,102,241,0.15)]' : 'bg-[#121118]/60 hover:bg-[#1e1b28]'}`}>
+                    <input
+                      type="radio"
+                      name="role"
+                      value="recruiter"
+                      checked={formData.role === 'recruiter'}
+                      onChange={handleInputChange}
+                      className="sr-only"
+                    />
+                    <span className="block text-sm font-medium text-white">Job recruiter</span>
+                  </label>
+                </div>
+              </div>
+
 
               {/* Gradient Submit Button */}
               <button
