@@ -9,6 +9,7 @@ import {
   FiCheckCircle, 
   FiLayers 
 } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 
 const NewJob = () => {
   // Mock auto-filled approved company data
@@ -21,8 +22,14 @@ const NewJob = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Logic on submit: Save job with status 'active', link to company, and set public visibility.
-    alert('Job successfully published with status: Active! Linked to ' + companyInfo.name);
+    
+    const formData = new FormData(e.currentTarget);
+    const jobPayload = Object.fromEntries(formData.entries());
+
+    // Safely toast using the newly assigned name attribute key
+    toast('Job successfully published with status: Active! Title: ' + (jobPayload.jobTitle || ''));
+    
+    console.log(jobPayload, ' : jobPayload'); // This will now log a full object!
   };
 
   return (
@@ -57,6 +64,7 @@ const NewJob = () => {
               <div className="flex flex-col gap-1.5 md:col-span-2 lg:col-span-3">
                 <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Job Title</label>
                 <input 
+                  name="jobTitle" // <-- ADDED
                   type="text" 
                   placeholder="e.g. Senior Full-Stack Engineer" 
                   className="w-full h-11 px-4 rounded-sm bg-zinc-900/90 border border-zinc-800 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-indigo-500 transition-colors text-sm"
@@ -67,7 +75,10 @@ const NewJob = () => {
               {/* Job Category */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Job Category</label>
-                <select className="w-full h-11 px-4 rounded-sm bg-zinc-900/90 border border-zinc-800 text-zinc-300 focus:outline-none focus:border-indigo-500 transition-colors text-sm">
+                <select 
+                  name="jobCategory" // <-- ADDED
+                  className="w-full h-11 px-4 rounded-sm bg-zinc-900/90 border border-zinc-800 text-zinc-300 focus:outline-none focus:border-indigo-500 transition-colors text-sm"
+                >
                   <option>Software Engineering</option>
                   <option>Design & Creative</option>
                   <option>Product Management</option>
@@ -79,7 +90,10 @@ const NewJob = () => {
               {/* Job Type */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Job Type</label>
-                <select className="w-full h-11 px-4 rounded-sm bg-zinc-900/90 border border-zinc-800 text-zinc-300 focus:outline-none focus:border-indigo-500 transition-colors text-sm">
+                <select 
+                  name="jobType" // <-- ADDED
+                  className="w-full h-11 px-4 rounded-sm bg-zinc-900/90 border border-zinc-800 text-zinc-300 focus:outline-none focus:border-indigo-500 transition-colors text-sm"
+                >
                   <option>Full-time</option>
                   <option>Part-time</option>
                   <option>Remote</option>
@@ -94,6 +108,7 @@ const NewJob = () => {
                   <FiCalendar className="text-zinc-500" /> Application Deadline
                 </label>
                 <input 
+                  name="deadline" // <-- ADDED
                   type="date" 
                   className="w-full h-11 px-4 rounded-sm bg-zinc-900/90 border border-zinc-800 text-zinc-300 focus:outline-none focus:border-indigo-500 transition-colors text-sm"
                   required
@@ -106,6 +121,7 @@ const NewJob = () => {
                   <FiMapPin className="text-zinc-500" /> Location Specifier / Remote Configurations
                 </label>
                 <input 
+                  name="location" // <-- ADDED
                   type="text" 
                   placeholder="e.g. San Francisco, US (or type 'Remote')" 
                   className="w-full h-11 px-4 rounded-sm bg-zinc-900/90 border border-zinc-800 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-indigo-500 transition-colors text-sm"
@@ -121,15 +137,28 @@ const NewJob = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="text-[11px] text-zinc-500 block mb-1">Minimum Range</label>
-                    <input type="number" placeholder="60,000" className="w-full h-10 px-3 rounded-sm bg-zinc-950 border border-zinc-800 text-sm focus:outline-none focus:border-indigo-500" />
+                    <input 
+                      name="salaryMin" // <-- ADDED
+                      type="number" 
+                      placeholder="60,000" 
+                      className="w-full h-10 px-3 rounded-sm bg-zinc-950 border border-zinc-800 text-sm focus:outline-none focus:border-indigo-500" 
+                    />
                   </div>
                   <div>
                     <label className="text-[11px] text-zinc-500 block mb-1">Maximum Range</label>
-                    <input type="number" placeholder="110,000" className="w-full h-10 px-3 rounded-sm bg-zinc-950 border border-zinc-800 text-sm focus:outline-none focus:border-indigo-500" />
+                    <input 
+                      name="salaryMax" // <-- ADDED
+                      type="number" 
+                      placeholder="110,000" 
+                      className="w-full h-10 px-3 rounded-sm bg-zinc-950 border border-zinc-800 text-sm focus:outline-none focus:border-indigo-500" 
+                    />
                   </div>
                   <div>
                     <label className="text-[11px] text-zinc-500 block mb-1">Currency</label>
-                    <select className="w-full h-10 px-3 rounded-sm bg-zinc-950 border border-zinc-800 text-sm focus:outline-none focus:border-indigo-500 text-zinc-300">
+                    <select 
+                      name="currency" // <-- ADDED
+                      className="w-full h-10 px-3 rounded-sm bg-zinc-950 border border-zinc-800 text-sm focus:outline-none focus:border-indigo-500 text-zinc-300"
+                    >
                       <option>USD ($)</option>
                       <option>EUR (€)</option>
                       <option>GBP (£)</option>
@@ -158,6 +187,7 @@ const NewJob = () => {
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Core Responsibilities</label>
                 <textarea 
+                  name="responsibilities" // <-- ADDED
                   rows={5}
                   placeholder="Outline day-to-day duties, operational goals, and team expectations..."
                   className="w-full p-4 rounded-sm bg-zinc-900/90 border border-zinc-800 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-indigo-500 transition-colors text-sm resize-none"
@@ -169,6 +199,7 @@ const NewJob = () => {
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Requirements & Qualifications</label>
                 <textarea 
+                  name="requirements" // <-- ADDED
                   rows={5}
                   placeholder="List standard skill profiles, education, technical tech-stacks required..."
                   className="w-full p-4 rounded-sm bg-zinc-900/90 border border-zinc-800 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-indigo-500 transition-colors text-sm resize-none"
@@ -183,6 +214,7 @@ const NewJob = () => {
                   <span className="text-[10px] text-zinc-600 font-medium uppercase tracking-wide">Optional</span>
                 </div>
                 <textarea 
+                  name="benefits" // <-- ADDED
                   rows={4}
                   placeholder="Health coverage, stock options, remote workspace adjustments, vacation guidelines..."
                   className="w-full p-4 rounded-sm bg-zinc-900/90 border border-zinc-800 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-indigo-500 transition-colors text-sm resize-none"
