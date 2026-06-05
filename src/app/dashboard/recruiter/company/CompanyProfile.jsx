@@ -1,7 +1,8 @@
 "use client";
 
-import { createCompany } from '@/lib/actions/companys';
-import React, { useState } from 'react';
+// Added updateCompany import
+import { createCompany, updateCompany } from '@/lib/actions/companys';
+import React, { useState, useEffect } from 'react';
 import { 
   FiPlus, 
   FiBriefcase, 
@@ -15,13 +16,13 @@ import {
   FiEdit2
 } from "react-icons/fi";
 
-export default function CompanyProfile({recruiter}) {
+export default function CompanyProfile({ recruiter, recruiterCompany }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [logoPreview, setLogoPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   
-  // Stores the persistent data received from your MongoDB database instance
+  // Hydrates with database entity fetched server-side
   const [companyData, setCompanyData] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -32,6 +33,13 @@ export default function CompanyProfile({recruiter}) {
     employeeRange: "1-10 employees",
     description: "",
   });
+
+  // Synchronize incoming server prop data down into your component state framework
+  useEffect(() => {
+    if (recruiterCompany) {
+      setCompanyData(recruiterCompany);
+    }
+  }, [recruiterCompany]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -49,19 +57,20 @@ export default function CompanyProfile({recruiter}) {
   };
 
   const handleEditClick = () => {
+    if (!companyData) return;
+    
     setFormData({
-      companyName: companyData.companyName,
-      category: companyData.category,
-      websiteUrl: companyData.websiteUrl,
-      location: companyData.location,
-      employeeRange: companyData.employeeRange,
-      description: companyData.description,
+      companyName: companyData.companyName || "",
+      category: companyData.category || "Technology",
+      websiteUrl: companyData.websiteUrl || "",
+      location: companyData.location || "",
+      employeeRange: companyData.employeeRange || "1-10 employees",
+      description: companyData.description || "",
     });
     setLogoPreview(companyData.companyLogo || null);
     setIsOpen(true);
   };
 
-  // HANDLESUBMIT PIPELINE INTEGRATION WITH APIS
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -69,6 +78,10 @@ export default function CompanyProfile({recruiter}) {
     let uploadedLogoUrl = companyData?.companyLogo || "";
 
     try {
+      if (!recruiter?.id) {
+        throw new Error("Unauthorized: Session validation identity missing.");
+      }
+
       // 1. Asset Image Node Handshake Pipeline
       if (selectedFile) {
         const apiKey = process.env.NEXT_PUBLIC_IMAGE_PUBLIC_UPLOAD_API || '8bb84650e0d6caa98ea544c5b10bcdb1';
@@ -102,12 +115,24 @@ export default function CompanyProfile({recruiter}) {
       };
 
       // 2. Network Endpoint Synchronization
-      if (companyData) {
-        // EDIT MODE: Trigger placeholder framework for update mutations
+      if (companyData?._id) {
+        // EDIT MODE: Trigger patch mutation framework via updateCompany action
         console.log("Updating existing metadata entity logic pipeline...");
         
-        // For now, update local state directly until your PUT/PATCH API is ready
-        setCompanyData(finalizedPayload);
+        const updateResult = await updateCompany(companyData._id, finalizedPayload);
+        
+        // MongoDB updateOne returns modifiedCount or acknowledged
+        if (updateResult && updateResult.acknowledged) {
+          console.log("Database entity mutated successfully.");
+          
+          setCompanyData((prev) => ({
+            ...prev,
+            ...finalizedPayload
+          }));
+        } else {
+          throw new Error("Backend engine rejected patch execution framework.");
+        }
+        
       } else {
         // CREATION MODE: Dispatch transaction matrix straight to backend cluster
         console.log("Saving full company registry metadata profile to backend...");
@@ -117,7 +142,6 @@ export default function CompanyProfile({recruiter}) {
         if (databaseResult && databaseResult.insertedId) {
           console.log("Database entry synchronized successfully:", databaseResult);
           
-          // Hydrate component dashboard framework using the real document structure
           setCompanyData({
             _id: databaseResult.insertedId,
             ...finalizedPayload
@@ -127,7 +151,7 @@ export default function CompanyProfile({recruiter}) {
         }
       }
       
-      // 3. Clear State Registers & Close Overlays
+      // 3. Clear Temporary State Registers & Close Overlays
       setIsOpen(false);
       setLogoPreview(null);
       setSelectedFile(null);
@@ -206,7 +230,7 @@ export default function CompanyProfile({recruiter}) {
               <div className="flex items-center gap-2.5 bg-zinc-950/30 border border-zinc-900/60 p-3 rounded-xl sm:col-span-2">
                 <FiGlobe className="text-zinc-600 w-4 h-4 flex-shrink-0" />
                 <a 
-                  href={`https://${companyData.websiteUrl}`} 
+                  href={companyData.websiteUrl?.startsWith('http') ? companyData.websiteUrl : `https://${companyData.websiteUrl}`} 
                   target="_blank" 
                   rel="noreferrer" 
                   className="text-indigo-400 hover:underline font-mono truncate"
@@ -250,7 +274,7 @@ export default function CompanyProfile({recruiter}) {
               </button>
 
               <div className="flex flex-col gap-1 pt-7 px-8 pb-5 border-b border-zinc-900/60">
-                <h3 className="text-xl font-bold tracking-tight text-white">{companyData ? "Update Corporate Profile" : "Register New Company"}</h3>
+                <h3 className="text-xl font-bold tracking-tight text-white">{companyData?._id ? "Update Corporate Profile" : "Register New Company"}</h3>
                 <p className="text-xs text-zinc-500 font-normal mt-0.5">Enter your business details to start hiring on HireLoop.</p>
               </div>
 
@@ -281,8 +305,7 @@ export default function CompanyProfile({recruiter}) {
                     <label className="text-xs font-semibold text-zinc-400">Website URL</label>
                     <div className="relative flex items-center">
                       <span className="absolute left-3.5 text-zinc-600"><FiGlobe className="w-4 h-4" /></span>
-                      <span className="absolute left-9 text-xs text-zinc-600 font-mono pointer-events-none select-none">https://</span>
-                      <input required type="text" placeholder="www.company.com" value={formData.websiteUrl} onChange={handleInputChange} name="websiteUrl" className="w-full pl-20 pr-4 py-2.5 bg-zinc-950/40 text-sm text-zinc-200 placeholder-zinc-700 border border-zinc-800/60 rounded-xl focus:border-indigo-500/60 transition-all outline-none" />
+                      <input required type="text" placeholder="https://www.company.com" value={formData.websiteUrl} onChange={handleInputChange} name="websiteUrl" className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/40 text-sm text-zinc-200 placeholder-zinc-700 border border-zinc-800/60 rounded-xl focus:border-indigo-500/60 transition-all outline-none" />
                     </div>
                   </div>
 
@@ -341,7 +364,10 @@ export default function CompanyProfile({recruiter}) {
               <div className="flex items-center justify-end gap-3 p-6 bg-zinc-950/40 border-t border-zinc-900/60">
                 <button type="button" onClick={() => setIsOpen(false)} className="px-5 py-2.5 bg-transparent hover:bg-zinc-900/60 text-zinc-400 border border-zinc-800 rounded-xl text-xs font-bold transition-colors cursor-pointer">Cancel</button>
                 <button type="submit" disabled={loading} className="px-6 py-2.5 bg-white hover:bg-zinc-200 text-zinc-950 font-bold rounded-xl text-xs transition-all shadow-md disabled:opacity-50 cursor-pointer">
-                  {loading ? "Uploading to Imgbb..." : companyData ? "Save Changes" : "Register Company"}
+                  {loading 
+                    ? (companyData?._id ? "Saving Changes..." : "Uploading to Imgbb...") 
+                    : (companyData?._id ? "Save Changes" : "Register Company")
+                  }
                 </button>
               </div>
             </form>
