@@ -1,4 +1,6 @@
 'use client'
+import { createJob } from '@/lib/actions/jobs';
+import { redirect } from 'next/navigation';
 import React from 'react';
 import { 
   FiBriefcase, 
@@ -20,16 +22,32 @@ const NewJob = () => {
     location: "San Francisco, CA"
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     const formData = new FormData(e.currentTarget);
     const jobPayload = Object.fromEntries(formData.entries());
 
     // Safely toast using the newly assigned name attribute key
-    toast('Job successfully published with status: Active! Title: ' + (jobPayload.jobTitle || ''));
+    // toast('Job successfully published with status: Active! Title: ' + (jobPayload.jobTitle || ''));
     
-    console.log(jobPayload, ' : jobPayload'); // This will now log a full object!
+    // console.log(jobPayload, ' : jobPayload');
+    
+    const payload = {
+    ...jobPayload,
+    companyId: "company_id_xyz123",
+    status: "active",
+    isPubliclyVisible: true
+  };
+
+    const res = await createJob(payload)
+
+    if(res.insertedId) {
+      toast.success('job posted successfully');
+      e.target.reset();
+      redirect('/dashboard/recruiter');
+    }
+    
   };
 
   return (

@@ -17,7 +17,7 @@ function NavBar() {
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
 
-  console.log("user : " , session)
+  // console.log("user : " , session)
 
   // Extracting first letter for safe avatar fallback display
   const getInitial = (name) => {
@@ -138,7 +138,7 @@ function NavBar() {
                           <div className="px-3 py-2 border-b border-zinc-900 mb-1">
                             <p className="text-xs font-medium text-zinc-400 truncate">{user.email}</p>
                           </div>
-                          <a href="/dashboard" className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-zinc-300 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors">
+                          <a href={`/dashboard/${user.role}`} className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-zinc-300 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors">
                             <FiBriefcase className="w-4 h-4 text-zinc-500" />
                             <span>My Dashboard</span>
                           </a>
