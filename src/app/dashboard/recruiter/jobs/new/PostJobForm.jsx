@@ -44,8 +44,10 @@ const PostJobForm = ({ company }) => {
 
     const payload = {
       ...jobPayload,
-      companyId: company._id, // Dynamically maps your real MongoDB ObjectId tracking signature
+      companyId: company._id, 
       status: "active",
+      companyName: company.companyName, 
+      companyLogo: company.companyLogo,
       isPubliclyVisible: true
     };
 

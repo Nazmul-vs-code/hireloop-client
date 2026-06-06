@@ -1,6 +1,5 @@
 "use client";
 
-// Added updateCompany import
 import { createCompany, updateCompany } from '@/lib/actions/companys';
 import React, { useState, useEffect } from 'react';
 import { 
@@ -22,7 +21,6 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
   const [logoPreview, setLogoPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   
-  // Hydrates with database entity fetched server-side
   const [companyData, setCompanyData] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -34,7 +32,6 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
     description: "",
   });
 
-  // Synchronize incoming server prop data down into your component state framework
   useEffect(() => {
     if (recruiterCompany) {
       setCompanyData(recruiterCompany);
@@ -82,11 +79,11 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
         throw new Error("Unauthorized: Session validation identity missing.");
       }
 
-      // 1. Asset Image Node Handshake Pipeline
       if (selectedFile) {
-        const apiKey = process.env.NEXT_PUBLIC_IMAGE_PUBLIC_UPLOAD_API || '8bb84650e0d6caa98ea544c5b10bcdb1';
+        const apiKey = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API;
+        
         if (!apiKey) {
-          throw new Error("Imgbb public upload API key configuration token is missing inside environment files.");
+          throw new Error("Imgbb public upload API key token missing.");
         }
 
         const imgbbData = new FormData();
@@ -100,12 +97,11 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
         });
 
         if (!imgbbResponse.ok) {
-          throw new Error("Imgbb media service failed to upload image payload.");
+          throw new Error("Imgbb media service failed to upload image.");
         }
 
         const imgbbResult = await imgbbResponse.json();
         uploadedLogoUrl = imgbbResult.data.url; 
-        console.log("Imgbb Asset Node Upload Successful:", uploadedLogoUrl);
       }
 
       const finalizedPayload = {
@@ -114,44 +110,31 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
         recruiterId: recruiter.id,
       };
 
-      // 2. Network Endpoint Synchronization
       if (companyData?._id) {
-        // EDIT MODE: Trigger patch mutation framework via updateCompany action
-        console.log("Updating existing metadata entity logic pipeline...");
-        
         const updateResult = await updateCompany(companyData._id, finalizedPayload);
         
-        // MongoDB updateOne returns modifiedCount or acknowledged
         if (updateResult && updateResult.acknowledged) {
-          console.log("Database entity mutated successfully.");
-          
           setCompanyData((prev) => ({
             ...prev,
             ...finalizedPayload
           }));
         } else {
-          throw new Error("Backend engine rejected patch execution framework.");
+          throw new Error("Backend engine rejected patch execution.");
         }
         
       } else {
-        // CREATION MODE: Dispatch transaction matrix straight to backend cluster
-        console.log("Saving full company registry metadata profile to backend...");
-        
         const databaseResult = await createCompany(finalizedPayload);
         
         if (databaseResult && databaseResult.insertedId) {
-          console.log("Database entry synchronized successfully:", databaseResult);
-          
           setCompanyData({
             _id: databaseResult.insertedId,
             ...finalizedPayload
           });
         } else {
-          throw new Error("Backend server accepted request body matrix but failed data parsing ingestion validation.");
+          throw new Error("Backend server failed data ingestion validation.");
         }
       }
       
-      // 3. Clear Temporary State Registers & Close Overlays
       setIsOpen(false);
       setLogoPreview(null);
       setSelectedFile(null);
@@ -165,8 +148,8 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
       });
 
     } catch (err) {
-      console.error("Critical Profile Submit Failure Pipeline Interception:", err.message);
-      alert(`Error context details: ${err.message}`);
+      console.error(err.message);
+      alert(`Error details: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -175,18 +158,9 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
   return (
     <div className="min-h-screen bg-[#020105] text-zinc-100 flex flex-col items-center p-6 select-none relative pt-16">
       
-      {!companyData && (
-        <button 
-          onClick={() => setIsOpen(true)}
-          className="bg-white hover:bg-zinc-200 text-zinc-950 font-bold px-6 py-3 rounded-xl text-xs flex items-center gap-2 transition-all duration-200 shadow-[0_4px_30px_rgba(255,255,255,0.1)] cursor-pointer mb-10 mx-auto"
-        >
-          <FiPlus className="w-4 h-4 stroke-[3]" />
-          Create a Company
-        </button>
-      )}
-
       <div className="max-w-xl w-full border border-zinc-800/60 bg-[#0a090e]/40 rounded-2xl p-8 backdrop-blur-xl flex flex-col shadow-lg transition-all duration-300">
-        {companyData ? (
+        {companyData?._id ? (
+          /* Profile view block when connected */
           <div className="flex flex-col space-y-6">
             <div className="flex items-start justify-between border-b border-zinc-900/80 pb-5">
               <div className="flex items-center gap-4">
@@ -250,20 +224,29 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
             </div>
           </div>
         ) : (
-          <div className="text-center flex flex-col items-center justify-center space-y-4 py-4">
+          /* Empty state view block when company profile doesn't exist */
+          <div className="text-center flex flex-col items-center justify-center space-y-5 py-4">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
               <FiBriefcase className="w-5 h-5" />
             </div>
             <div className="space-y-1">
               <h2 className="text-md font-bold text-white">No Corporate Entity Connected</h2>
               <p className="text-xs text-zinc-500 max-w-sm mx-auto leading-relaxed">
-                Your profile workspace is currently unlinked. Click the button above to register your brand.
+                Your profile workspace is currently unlinked. Click the button below to register your brand.
               </p>
             </div>
+            <button 
+              onClick={() => setIsOpen(true)}
+              className="bg-white hover:bg-zinc-200 text-zinc-950 font-bold px-6 py-3 rounded-xl text-xs flex items-center gap-2 transition-all duration-200 shadow-[0_4px_30px_rgba(255,255,255,0.1)] cursor-pointer mt-2"
+            >
+              <FiPlus className="w-4 h-4 stroke-[3]" />
+              Create a Company
+            </button>
           </div>
         )}
       </div>
 
+      {/* Modal Section */}
       {isOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/75 backdrop-blur-md transition-opacity" onClick={() => setIsOpen(false)} />
