@@ -95,7 +95,7 @@ function NavBar() {
                 <ul className="flex items-center gap-6">
                   <li><MyNavLink href="/browse-jobs">Browse Jobs</MyNavLink></li>
                   <li><MyNavLink href="/company">Company</MyNavLink></li>
-                  <li><MyNavLink href="/pricing">Pricing</MyNavLink></li>
+                  <li><MyNavLink href="/plans">plans</MyNavLink></li>
                 </ul>
 
                 {/* Micro Vertical Splitter Divider */}
@@ -187,7 +187,7 @@ function NavBar() {
                 <ul className="flex flex-col gap-3 p-5">
                   <li><MyNavLink href="/browse-jobs">Browse Jobs</MyNavLink></li>
                   <li><MyNavLink href="/company">Company</MyNavLink></li>
-                  <li><MyNavLink href="/pricing">Pricing</MyNavLink></li>
+                  <li><MyNavLink href="/plans">plans</MyNavLink></li>
                   
                   <hr className="border-zinc-900 my-1" />
                   

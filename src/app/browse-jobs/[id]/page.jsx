@@ -3,10 +3,13 @@ import React from 'react';
 import { FiMapPin, FiBriefcase, FiCheckCircle, FiGlobe, FiClock, FiLayers } from 'react-icons/fi';
 import { Button, Card, Chip } from '@heroui/react';
 import Link from 'next/link';
+import { getUserSession } from '@/lib/core/session';
 
 const JobDetailsPage = async ({ params }) => {
     const { id } = await params;
     const job = await getJobById(id);
+
+    const user = await getUserSession()
 
     if (!job) return <div className="text-white p-20 text-center">Job not found.</div>;
 
@@ -71,11 +74,11 @@ const JobDetailsPage = async ({ params }) => {
                             </div>
 
                             {/* FIXED: Using a standard Next.js Link wrapper instead of 'as={Link}' */}
-                            <Link href={`/apply/${job._id}`} className="block w-full">
+                            <Link href={`/browse-jobs/${id}/apply`} className="block w-full">
                                 <Button 
-                                    radius="none" 
+                                    variant='danger'
                                     size="lg" 
-                                    className="w-full bg-white text-black font-bold uppercase tracking-widest"
+                                    className="w-full rounded-none  text-black font-bold uppercase tracking-widest"
                                 >
                                     Apply Now
                                 </Button>

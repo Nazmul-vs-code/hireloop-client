@@ -6,12 +6,16 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { authClient } from '@/lib/auth-client';
-import { useRouter } from 'next/navigation'; // 1. IMPORT THE ROUTER
+import { useRouter, useSearchParams } from 'next/navigation'; // 1. IMPORT THE ROUTER
 
 const SignInPage = () => {
   const router = useRouter(); // 2. INITIALIZE THE ROUTER
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect' ) || '/'
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -35,7 +39,8 @@ const SignInPage = () => {
 
     if (data) {
       toast.success('Welcome back!');
-      router.push('/'); // 3. CLEAN NEXT.JS ROUTING REDIRECT
+      
+      router.push(redirectTo)
     }
     if (error) {
       toast.error(error.message || 'Invalid email or password');
@@ -207,7 +212,7 @@ const SignInPage = () => {
 
             <p className="text-center text-xs text-zinc-500 mt-8 font-medium">
               New to HireLoop?{' '}
-              <a href="/signup" className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 transition-colors ml-0.5">
+              <a href={`/signup?redirect=${redirectTo}`} className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 transition-colors ml-0.5">
                 Create an account
               </a>
             </p>

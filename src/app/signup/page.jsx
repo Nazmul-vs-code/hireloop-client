@@ -6,6 +6,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { authClient } from '@/lib/auth-client';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +16,12 @@ const SignUpPage = () => {
     password: '',
     role: 'seeker',
   });
+
+  
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || '/'
+  const router = useRouter()
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,7 +41,7 @@ const SignUpPage = () => {
     console.log(data, error, ' data , error ')
     if (data) {
       toast.success('data here : ' + data.user)
-      window.location.href = '/'
+      router.push(redirectTo)
     }
     if (error) {
 
@@ -293,7 +300,7 @@ const SignUpPage = () => {
 
             <p className="text-center text-xs text-zinc-500 mt-8 font-medium">
               Already have an account?{' '}
-              <a href="/sign-in" className="text-purple-400 hover:text-purple-300 underline underline-offset-4 transition-colors ml-0.5">
+              <a href={`/sign-in?redirect=${redirectTo}`} className="text-purple-400 hover:text-purple-300 underline underline-offset-4 transition-colors ml-0.5">
                 Sign In here
               </a>
             </p>
