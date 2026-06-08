@@ -8,6 +8,10 @@ export const getJobs = async (comnpnyId , status='active') => {
     return res.json();
 }
 
+export const getJobById = async (jobId) => {
+    return serverFetch(`/api/pupblic/jobs/${jobId}`)
+}
+
 export const GetAllJobsForBrowsing = async () => {
     return serverFetch('/api/pupblic/jobs')
 }

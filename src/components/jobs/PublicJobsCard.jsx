@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 import { FiMapPin, FiDollarSign, FiArrowRight, FiBriefcase } from 'react-icons/fi';
 
@@ -5,11 +6,11 @@ const PublicJobsCard = ({ job }) => {
   const formatSalary = (amount) => new Intl.NumberFormat('en-US').format(amount);
 
   return (
-    <div className="group relative bg-[#060608] border border-zinc-800 rounded-3xl p-6 transition-all duration-300 hover:border-indigo-500/30 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)]">
-      
+    <div className="group relative bg-[#060608] border border-zinc-800 rounded-1 p-6 transition-all duration-300 hover:border-indigo-500/30 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)]">
+
       {/* 1. TOP SECTION: Company Logo & Basic Info */}
       <div className="flex items-center gap-4 mb-6">
-        <div className="w-14 h-14 rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-900 shadow-lg">
+        <div className="w-14 h-14 rounded-10 overflow-hidden border border-zinc-800 bg-zinc-900 shadow-lg">
           {job.companyLogo ? (
             <img src={job.companyLogo} alt={job.companyName} className="w-full h-full object-cover" />
           ) : (
@@ -25,7 +26,7 @@ const PublicJobsCard = ({ job }) => {
       </div>
 
       {/* 2. JOB TITLE & CATEGORY (Highlighted Area) */}
-      <div className="bg-zinc-900/50 border border-zinc-800 p-4 rounded-2xl mb-4">
+      <div className="bg-zinc-900/50 border border-zinc-800 p-4 rounded-xl mb-4">
         <div className="flex items-center gap-2 mb-2 text-indigo-400">
           <FiBriefcase className="w-4 h-4" />
           <span className="text-xs font-bold uppercase tracking-widest">{job.jobCategory}</span>
@@ -46,7 +47,7 @@ const PublicJobsCard = ({ job }) => {
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <div className="text-emerald-400 font-bold text-lg flex items-center gap-1.5">
+            <div className="text-emerald-400 font-bold text-sm flex items-center gap-1.5">
               <FiDollarSign className="w-4 h-4" />
               {job.currency} {formatSalary(job.salaryMin)} - {formatSalary(job.salaryMax)}
             </div>
@@ -55,10 +56,14 @@ const PublicJobsCard = ({ job }) => {
               {job.location}
             </div>
           </div>
-          
-          <button className="w-12 h-12 rounded-2xl bg-white text-black flex items-center justify-center hover:bg-indigo-500 hover:text-white transition-all duration-300">
-            <FiArrowRight className="w-5 h-5" />
-          </button>
+
+          <Link
+            href={`/browse-jobs/${job._id}`}
+            className="flex items-center justify-center gap-2 p-1 h-12  bg-white text-black font-bold text-sm hover:bg-indigo-500 hover:text-white transition-all duration-300 hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] group"
+          >
+            Apply Now
+            <FiArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
         </div>
       </div>
     </div>
