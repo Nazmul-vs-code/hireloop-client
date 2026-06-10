@@ -18,6 +18,7 @@ const JobApply = ({ job, applicant }) => {
             applicantName: applicant.name,
             applicantId: applicant?.id,
             companyName: job?.companyName,
+            status:'applied',
             ...data,
         };
 

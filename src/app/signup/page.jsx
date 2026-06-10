@@ -31,11 +31,15 @@ const SignUpPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
+    const plan = formData.role === 'seeker' ? 'seeker_free' : 'recruiter_free'
+
     const { data, error } = await authClient.signUp.email({
       name: formData.name,
       email: formData.email,
       password: formData.password,
-      role: formData.role
+      role: formData.role,
+      plan
 
     });
     console.log(data, error, ' data , error ')
