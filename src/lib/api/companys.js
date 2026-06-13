@@ -1,10 +1,10 @@
-import { serverFetch } from "../core/server";
+import { protectedFetch, serverFetch } from "../core/server";
 import { getUserSession } from "../core/session";
 
 const ServerUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
 
 export const getAllCompanies = async () => {
-    return serverFetch('/api/companies')
+    return protectedFetch('/api/companies')
 }
 
 export const getRecruiterCompany = async (recruiterId) => {

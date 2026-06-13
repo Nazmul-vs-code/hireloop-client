@@ -9,7 +9,7 @@ const DashboardLayout = async ({children}) => {
     return (
         <div className='flex min-h-screen'>
             <DasboardSidebar role={user?.role}  />
-            <div>{children}</div>
+            <div className="flex-1 min-w-0">{children}</div>
         </div>
     );
 };
