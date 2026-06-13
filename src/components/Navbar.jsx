@@ -26,6 +26,7 @@ function NavBar() {
   const DashBoardLinks = {
     seeker: "/dashboard/seeker",
     recruiter: "/dashboard/recruiter",
+    admin: "/dashboard/admin",
   };
   // Dynamically push Dashboard if user exists
 

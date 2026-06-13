@@ -75,14 +75,31 @@ const PostJobForm = ({ company }) => {
       <div className="w-full max-w-5xl bg-[#0a090e]/80 border border-zinc-800/80 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden transition-all duration-300">
 
         {/* Main Header Block */}
-        <div className="border-b border-zinc-800/80 p-6 sm:p-8 bg-gradient-to-r from-zinc-900/40 to-transparent">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-zinc-400">
-            Deploy New Position
-          </h1>
-          <p className="text-sm text-zinc-500 mt-1">Fill out the listing fields completely to initialize your position on the public network.</p>
+        <div className="border-b border-zinc-800/80 p-6 sm:p-8 bg-gradient-to-r from-zinc-900/40 to-transparent flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-zinc-400">
+              Deploy New Position
+            </h1>
+            <p className="text-sm text-zinc-500 mt-1">Fill out the listing fields completely to initialize your position on the public network.</p>
+          </div>
+          
+          <div className="flex flex-col items-end gap-1">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Company Status</span>
+            <span className={`px-3 py-1 rounded-full text-[11px] font-bold border capitalize ${
+              company.status?.toLowerCase() === 'approved' 
+                ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' 
+                : 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+            }`}>
+              {company.status || 'Pending'}
+            </span>
+          </div>
         </div>
 
+
+            {company.status !== 'Approved' && <div className='p-4 flex text-center'>Please wait for approval.</div>}
         {/* Unified Continuous Form */}
+
+        { company.status === 'Approved' &&
         <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-10">
 
           {/* SECTION 1: JOB INFO */}
@@ -325,7 +342,9 @@ const PostJobForm = ({ company }) => {
             </button>
           </div>
 
-        </form>
+        </form> 
+
+        }
       </div>
     </div>
   );

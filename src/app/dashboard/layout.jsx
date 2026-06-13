@@ -5,9 +5,9 @@ import React from 'react';
 const DashboardLayout = async ({children}) => {
 
     const user = await getUserSession()
-    console.log('user in dashboard : ' , user)
+    // console.log('user in dashboard : ' , user)
     return (
-        <div className='flex min-h-screen flex-1'>
+        <div className='flex min-h-screen'>
             <DasboardSidebar role={user?.role}  />
             <div>{children}</div>
         </div>

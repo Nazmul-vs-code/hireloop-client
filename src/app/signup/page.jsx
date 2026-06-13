@@ -42,7 +42,7 @@ const SignUpPage = () => {
       plan
 
     });
-    console.log(data, error, ' data , error ')
+    // console.log(data, error, ' data , error ')
     if (data) {
       toast.success('data here : ' + data.user)
       router.push(redirectTo)
