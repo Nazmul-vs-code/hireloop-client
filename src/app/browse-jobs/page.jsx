@@ -1,52 +1,85 @@
-'use client'; // This must be a client component now to hold the filtered list
+'use client';
 import React, { useState, useEffect } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import PublicJobsCard from '@/components/jobs/PublicJobsCard';
 import FilterJobs from '@/components/jobs/FilterJobs';
 import { GetAllJobsForBrowsing } from '@/lib/api/jobs';
+import { PaginationWithSummary } from './PaginationWithSummary';
 
 const PublicJobsPage = () => {
     const [jobs, setJobs] = useState([]);
     const [filteredJobs, setFilteredJobs] = useState([]);
+    const [page, setPage] = useState(1);
+    
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+    
+    const JOBS_PER_PAGE = 6;
 
+    // 1. Initial Load
     useEffect(() => {
-        GetAllJobsForBrowsing().then((data) => {
-            setJobs(data || []);
-            setFilteredJobs(data || []);
-        });
+        GetAllJobsForBrowsing().then((data) => setJobs(data || []));
     }, []);
 
-    const handleFilter = ({ search, category, type }) => {
-        let filtered = jobs;
+    // 2. Filter logic & Pagination reset
+    useEffect(() => {
+        if (jobs.length === 0) return;
+        
+        const s = searchParams.get('search') || '';
+        const cat = searchParams.get('category') || 'All';
+        const type = searchParams.get('type') || 'All';
+        const remote = searchParams.get('remote') || 'All';
 
-        if (search) filtered = filtered.filter(j => j.jobTitle.toLowerCase().includes(search.toLowerCase()));
-        if (category !== 'All') filtered = filtered.filter(j => j.jobCategory === category);
+        let filtered = jobs;
+        if (s) filtered = filtered.filter(j => j.jobTitle.toLowerCase().includes(s.toLowerCase()));
+        if (cat !== 'All') filtered = filtered.filter(j => j.jobCategory === cat);
         if (type !== 'All') filtered = filtered.filter(j => j.jobType === type);
+        if (remote !== 'All') filtered = filtered.filter(j => j.isRemote === (remote === 'true'));
 
         setFilteredJobs(filtered);
+        setPage(1); // Reset to page 1 whenever filters change
+    }, [searchParams, jobs]);
+
+    // 3. Handle Filter Changes
+    const handleFilter = (newFilters) => {
+        const params = new URLSearchParams(searchParams);
+        Object.entries(newFilters).forEach(([key, val]) => {
+            if (val && val !== 'All') params.set(key, val);
+            else params.delete(key);
+        });
+        router.push(`${pathname}?${params.toString()}`);
     };
 
+    // 4. Calculate pagination slice
+    const startIndex = (page - 1) * JOBS_PER_PAGE;
+    const paginatedJobs = filteredJobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
+    const totalPages = Math.ceil(filteredJobs.length / JOBS_PER_PAGE) || 1;
+
     return (
-        <div className="min-h-screen bg-[#020105] text-zinc-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-[#020105] text-zinc-100 py-12 px-4">
             <div className="max-w-7xl mx-auto">
-                <div className="mb-10 text-center md:text-left relative group">
-                    {/* Glowing backdrop effect */}
-                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-
-                    <h1 className="relative text-4xl md:text-5xl font-extrabold tracking-tight mb-3 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        Explore
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 ml-3 drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]">
-                            Opportunities
-                        </span>
-                    </h1>
-
-                    <div className="h-1 w-20 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full mt-4 mx-auto md:mx-0 shadow-[0_0_10px_rgba(52,211,153,0.5)]"></div>
-                </div>
-
                 <FilterJobs onFilterChange={handleFilter} />
+                
+                <p className="text-zinc-500 mb-6 font-medium">
+                    Showing {filteredJobs.length} {filteredJobs.length === 1 ? 'opportunity' : 'opportunities'} found
+                </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredJobs.map((job) => <PublicJobsCard key={job._id} job={job} />)}
+                    {paginatedJobs.map((job) => (
+                        <PublicJobsCard key={job._id} job={job} />
+                    ))}
                 </div>
+
+                {filteredJobs.length > 0 && (
+                    <PaginationWithSummary 
+                        page={page} 
+                        setPage={setPage} 
+                        totalPages={totalPages} 
+                        totalItems={filteredJobs.length}
+                        itemsPerPage={JOBS_PER_PAGE}
+                    />
+                )}
             </div>
         </div>
     );

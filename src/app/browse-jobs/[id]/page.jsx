@@ -83,6 +83,7 @@ const JobDetailsPage = async ({ params }) => {
                                     Apply Now
                                 </Button>
                             </Link>
+                            <Button className={`w-full hover:bg-green-400`} variant='ghost' > Save job </Button>
                         </Card>
                     </div>
                 </div>

@@ -1,3 +1,4 @@
+'use server'
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { PLAN_PRICE_ID, stripe } from '@/lib/stripe';

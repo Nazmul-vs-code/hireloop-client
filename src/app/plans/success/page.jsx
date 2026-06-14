@@ -4,12 +4,15 @@ import { redirect } from 'next/navigation';
 import { stripe } from '@/lib/stripe';
 import Link from 'next/link';
 import { createSubscriptions } from '@/lib/actions/subsciptions';
+import { getUserSession } from '@/lib/core/session';
 
 export default async function Success({ searchParams }) {
   // Await the searchParams promise
   const { session_id } = await searchParams;
 
   if (!session_id) return redirect('/');
+
+  const user = await getUserSession()
 
   // Destructure status and customer_details directly from the result
   const {
@@ -57,7 +60,8 @@ export default async function Success({ searchParams }) {
           {/* Navigation */}
           <div className="space-y-3">
             <Link 
-              href="/dashboard"
+              href={`/dashboard/${user.role}`}
+
               className="flex items-center justify-center gap-2 w-full bg-white text-black font-black uppercase tracking-widest hover:bg-zinc-200 transition-all rounded-xl h-12"
             >
               Access Dashboard <FiArrowRight />
